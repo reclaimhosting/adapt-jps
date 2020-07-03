@@ -1,0 +1,56 @@
+type: install
+id: adapt
+name: Adapt Learning Authoring Tool
+homepage: https://www.adaptlearning.org/
+baseUrl: https://raw.githubusercontent.com/reclaimhosting/adapt-jps/master
+logo: images/adapt-logo.png
+
+description: 
+  text: Adapt is a free and easy to use framework and authoring tool that creates fully responsive, multi-device, HTML5 e-learning content.
+  
+categories:
+- apps/popular
+- apps/education
+
+globals:
+  password: ${fn.password(10)}
+
+nodes:
+  - cloudlets: 8
+    nodeType: nodejs10-supervisor
+    env:
+      NODE_ENV: production
+  - cloudlets: 8
+    nodeType: mongodb
+
+onInstall:
+  - createDb
+  - deployArchive
+  - npmInstall
+  - restartNodes:
+      nodeGroup: [cp]
+
+actions:
+  deployArchive:
+    deploy:
+      archive: https://cloud-jps-archives.s3.amazonaws.com/adapt_authoring-0.10.3.zip
+      name: adapt_authoring-0.10.3
+      context: ROOT
+      
+  createDb:
+    cmd[nosqldb]:
+      mongo -u admin -p ${nodes.nosqldb.master.password} admin --eval "db.getSiblingDB('adapt-tenant-master');"
+      
+  npmInstall:
+    - cmd [cp]: |-
+        cd $HOME/ROOT;
+        npm install --production
+        node install --install Y --serverPort 8080 --serverName localhost --dataRoot data --authoringToolRepository https://github.com/adaptlearning/adapt_authoring.git --frameworkRepository https://github.com/adaptlearning/adapt_framework.git --frameworkRevision tags/v5.6.0 --dbName adapt-tenant-master --useConnectionUri N --dbHost ${nodes.nosqldb.master.intIP} --dbPort 27017 --dbUser admin --dbPass ${nodes.nosqldb.master.password} --dbAuthSource admin --useSmtp N --masterTenantName Site Admin --masterTenantDisplayName Site Admin --suEmail ${user.email} --suPassword ${globals.password} --suRetypePassword ${globals.password}
+      
+ssl: true
+skipNodeEmails: true
+
+success: | 
+  **Access URL**: [https://${env.domain}/](https://${env.domain}/)  
+  **Username**: ${user.email}
+  **Password**: ${globals.password}
