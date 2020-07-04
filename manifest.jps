@@ -45,7 +45,7 @@ actions:
     - cmd [cp]: |-
         cd $HOME/ROOT;
         npm install --production
-        node install --install Y --serverPort 8080 --serverName localhost --dataRoot data --authoringToolRepository https://github.com/adaptlearning/adapt_authoring.git --frameworkRepository https://github.com/adaptlearning/adapt_framework.git --frameworkRevision tags/v5.6.0 --dbName adapt-tenant-master --useConnectionUri N --dbHost ${nodes.nosqldb.master.intIP} --dbPort 27017 --dbUser admin --dbPass ${nodes.nosqldb.master.password} --dbAuthSource admin --useSmtp N --masterTenantName Site Admin --masterTenantDisplayName Site Admin --suEmail ${user.email} --suPassword ${globals.password} --suRetypePassword ${globals.password}
+        node install --install Y --serverPort 8080 --serverName localhost --dataRoot data --authoringToolRepository https://github.com/adaptlearning/adapt_authoring.git --frameworkRepository https://github.com/adaptlearning/adapt_framework.git --frameworkRevision tags/v5.6.0 --dbName adapt-tenant-master --useConnectionUri N --dbHost ${nodes.nosqldb.master.intIP} --dbPort 27017 --dbUser admin --dbPass ${nodes.nosqldb.master.password} --dbAuthSource admin --useSmtp N --masterTenantName Site Admin --masterTenantDisplayName Site Admin --suEmail ${user.email} --suPassword ${globals.password} --suRetypePassword ${globals.password} --skipVersionCheck
       
 ssl: true
 skipNodeEmails: true
